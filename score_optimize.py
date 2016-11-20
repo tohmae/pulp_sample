@@ -5,7 +5,7 @@ import argparse
 import sys
 
 parser = argparse.ArgumentParser(description='optimizer')
-parser.add_argument('--user', '-u', type=int, default=1,
+parser.add_argument('--user', '-u', type=int, default=0,
                     help='')
 parser.add_argument('--jack', '-j', type=int, default=0,
                     help='')
@@ -62,10 +62,15 @@ prob += estimate
 for u in Users:
     prob += pulp.lpSum([choices[u][i] for i in Items]) == 5
 
-if args.user == 1:
+if args.user != 0:
     # アイテム制限(各item10人のみ選択)
     for i in Items:
         prob += pulp.lpSum([choices[u][i] for u in Users]) <= 10
+    # アイテム制限(item 18,19のみ5回以上imp)
+    if args.user == 2:
+        for i in [18,19]:
+            prob += pulp.lpSum([choices[u][i] for u in Users]) >= 5
+
 
 #print(prob)
 
